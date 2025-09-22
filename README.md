@@ -1,6 +1,6 @@
 # pdf-tucano
 
-A standalone PDF-to-Markdown microservice for converting uploaded documents into Markdown. Upload a PDF, poll for status, and retrieve Markdown output once conversion completes. Jobs are persisted in PostgreSQL and PDFs are stored on disk, while conversion relies on OpenRouter for OCR/LLM transcription.
+A standalone PDF-to-Markdown microservice for converting PDF documents into Markdown. Upload a PDF, poll for status, and retrieve Markdown output once conversion completes. Jobs are persisted in PostgreSQL and PDFs are stored on disk, while conversion relies on OpenRouter for OCR/LLM transcription.
 
 ## Features
 
@@ -18,13 +18,7 @@ A standalone PDF-to-Markdown microservice for converting uploaded documents into
    Copy `.env.example` to `.env` and fill in your OpenRouter key, or export values manually:
 
 ```bash
-export DATABASE_URL="postgresql+psycopg2://user:pass@postgres:5432/pdf_tucano"
-export OPENROUTER_API_KEY="sk_..."
-# Optional overrides (match provided docker-compose defaults)
-# export PAGE_IMAGE_WIDTH=1500
-# export PAGE_IMAGE_DPI=300
-# export MAX_CONCURRENT_PAGES=8
-# export STORAGE_ROOT=/data
+OPENROUTER_API_KEY=your-openrouter-api-key
 ```
 
 2. **Run with Docker Compose (example)**
@@ -33,15 +27,22 @@ export OPENROUTER_API_KEY="sk_..."
 services:
   postgres:
     image: postgres:17
+    restart: unless-stopped
     environment:
       POSTGRES_DB: pdf_tucano
       POSTGRES_USER: postgresuser
       POSTGRES_PASSWORD: postgresPASS123
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgresuser -d pdf_tucano"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - pgdata:/var/lib/postgresql/data
 
   pdf-tucano:
     build: .
+    restart: unless-stopped    
     environment:
       DATABASE_URL: postgresql+psycopg2://postgresuser:postgresPASS123@postgres:5432/pdf_tucano
       OPENROUTER_MODEL: google/gemini-2.0-flash-001
@@ -50,18 +51,20 @@ services:
       MAX_CONCURRENT_PAGES: 8
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
       LOG_LEVEL: DEBUG
-    volumes:
-      - pdfdata:/data
     depends_on:
       postgres:
         condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - pdfdata:/data
 
 volumes:
   pgdata:
   pdfdata:
 ```
 
-> **Note:** export `OPENROUTER_API_KEY` (or populate `.env` copied from `.env.example`) before running `docker compose up`. The PostgreSQL service is only reachable from other containers on the Compose network (e.g., via hostname `postgres`).
+> **Note:** The PostgreSQL service is only reachable from other containers on the Compose network (e.g., via hostname `postgres`).
 If you previously created the `pgdata` volume with a different Postgres major version, remove it before starting (`docker volume rm pdf-tucano_pgdata`) or Docker will report an incompatible data-directory error.
 
 3. **API usage**
