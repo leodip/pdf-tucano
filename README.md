@@ -89,7 +89,7 @@ curl http://localhost:8000/jobs/<job_id>/result.txt
 |----------|---------|-------------|
 | `DATABASE_URL` | – | SQLAlchemy connection string for PostgreSQL |
 | `OPENROUTER_API_KEY` | – | API key for OpenRouter |
-| `OPENROUTER_MODEL` | `google/gemini-2.0-flash-001` | Model used for image-to-markdown conversion |
+| `OPENROUTER_MODEL` | `google/gemini-2.0-flash-001` | Model used for image-to-markdown conversion. This default model works great and it's cheap. |
 | `PAGE_IMAGE_WIDTH` | `1500` | Target image width before sending to OpenRouter |
 | `PAGE_IMAGE_DPI` | `300` | PDF rasterization DPI |
 | `MAX_CONCURRENT_PAGES` | `8` | Page-level concurrency per job |
