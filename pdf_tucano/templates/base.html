@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}pdf-tucano{% endblock %}</title>
+    <style>
+        :root {
+            color-scheme: light dark;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f6f8;
+            color: #1f2933;
+        }
+        header {
+            background: #111827;
+            color: #f9fafb;
+            padding: 1rem 2rem;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        main {
+            padding: 2rem;
+        }
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+        th, td {
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            background: #f3f4f6;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            text-transform: capitalize;
+        }
+        .status.completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .status.processing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .status.failed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        .status.queued {
+            background: #e0f2fe;
+            color: #075985;
+        }
+        dl {
+            display: grid;
+            grid-template-columns: max-content 1fr;
+            gap: 0.4rem 1rem;
+            margin: 1.5rem 0;
+        }
+        dt {
+            font-weight: 600;
+            color: #374151;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>pdf-tucano Admin</h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

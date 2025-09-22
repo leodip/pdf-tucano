@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}Job {{ job.id }} · pdf-tucano{% endblock %}
+
+{% block content %}
+<p><a href="/admin">← Back to Jobs</a></p>
+<h2>Job {{ job.id }}</h2>
+<span class="status {{ job.status }}">{{ job.status }}</span>
+
+<dl>
+    <dt>Original Filename</dt>
+    <dd>{{ job.original_filename or '—' }}</dd>
+
+    <dt>Total Pages</dt>
+    <dd>{{ job.total_pages }}</dd>
+
+    <dt>Completed Pages</dt>
+    <dd>{{ job.completed_pages }}</dd>
+
+    <dt>Created</dt>
+    <dd>{{ job.created_at.strftime('%Y-%m-%d %H:%M:%S') if job.created_at else '—' }}</dd>
+
+    <dt>Started</dt>
+    <dd>{{ job.started_at.strftime('%Y-%m-%d %H:%M:%S') if job.started_at else '—' }}</dd>
+
+    <dt>Completed</dt>
+    <dd>{{ job.completed_at.strftime('%Y-%m-%d %H:%M:%S') if job.completed_at else '—' }}</dd>
+
+    <dt>Total Cost</dt>
+    <dd>
+        {% if job.total_cost is not none %}
+            {{ job.cost_currency or 'USD' }} {{ "%.6f"|format(job.total_cost|float) }}
+        {% else %}
+            —
+        {% endif %}
+    </dd>
+
+    <dt>Prompt Tokens</dt>
+    <dd>{{ job.prompt_tokens if job.prompt_tokens is not none else '—' }}</dd>
+
+    <dt>Completion Tokens</dt>
+    <dd>{{ job.completion_tokens if job.completion_tokens is not none else '—' }}</dd>
+
+    <dt>Total Tokens</dt>
+    <dd>{{ job.total_tokens if job.total_tokens is not none else '—' }}</dd>
+
+    <dt>Error Message</dt>
+    <dd>{{ job.error_message or '—' }}</dd>
+</dl>
+
+<h3>Pages</h3>
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th>Generation</th>
+            <th>Tokens (prompt/completion/total)</th>
+            <th>Cost</th>
+            <th>Stats Synced</th>
+            <th>Error</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for page in pages %}
+        <tr>
+            <td>{{ page.page_number }}</td>
+            <td><span class="status {{ page.status }}">{{ page.status }}</span></td>
+            <td>{{ page.updated_at.strftime('%Y-%m-%d %H:%M:%S') if page.updated_at else '—' }}</td>
+            <td>{{ page.generation_id or '—' }}</td>
+            <td>
+                {% set prompt = page.prompt_tokens if page.prompt_tokens is not none else '—' %}
+                {% set completion = page.completion_tokens if page.completion_tokens is not none else '—' %}
+                {% set total = page.total_tokens if page.total_tokens is not none else '—' %}
+                {{ prompt }}/{{ completion }}/{{ total }}
+            </td>
+            <td>
+                {% if page.total_cost is not none %}
+                    {{ page.cost_currency or 'USD' }} {{ "%.6f"|format(page.total_cost|float) }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+            <td>{{ page.generation_stats_synced_at.strftime('%Y-%m-%d %H:%M:%S') if page.generation_stats_synced_at else '—' }}</td>
+            <td>{{ page.error_message or '—' }}</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if job.result_markdown %}
+<h3>Markdown Output</h3>
+<pre>{{ job.result_markdown }}</pre>
+{% endif %}
+{% endblock %}

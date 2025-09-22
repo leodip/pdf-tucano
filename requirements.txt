@@ -1,0 +1,12 @@
+backoff==2.2.1
+fastapi==0.110.2
+uvicorn[standard]==0.29.0
+sqlalchemy==2.0.29
+psycopg2-binary==2.9.9
+pydantic==1.10.13
+requests==2.31.0
+pdf2image==1.17.0
+Pillow==10.2.0
+PyPDF2==3.0.1
+python-multipart==0.0.9
+Jinja2==3.1.4

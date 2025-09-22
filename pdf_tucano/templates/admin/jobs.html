@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs · pdf-tucano{% endblock %}
+
+{% block content %}
+<h2>Conversion Jobs</h2>
+<p>Total jobs: {{ total_count }} · Showing latest {{ jobs|length }}</p>
+<table>
+    <thead>
+        <tr>
+            <th>Job ID</th>
+            <th>Status</th>
+            <th>Pages</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>Cost</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for job in jobs %}
+        <tr>
+            <td><code>{{ job.id }}</code></td>
+            <td><span class="status {{ job.status }}">{{ job.status }}</span></td>
+            <td>{{ job.completed_pages }} / {{ job.total_pages }}</td>
+            <td>{{ job.created_at.strftime('%Y-%m-%d %H:%M:%S') if job.created_at else '—' }}</td>
+            <td>{{ job.completed_at.strftime('%Y-%m-%d %H:%M:%S') if job.completed_at else '—' }}</td>
+            <td>
+                {% if job.total_cost is not none %}
+                    {{ job.cost_currency or 'USD' }} {{ "%.6f"|format(job.total_cost|float) }}
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+            <td><a href="/admin/jobs/{{ job.id }}">View</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% if total_count > jobs|length %}
+<p><small>Only the newest records are shown. Use the API for full history.</small></p>
+{% endif %}
+{% endblock %}
